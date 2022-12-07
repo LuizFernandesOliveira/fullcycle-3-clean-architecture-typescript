@@ -16,7 +16,7 @@ export default class CustomerRepository implements RepositoryInterface<Customer>
       rewardPoints: entity.rewardPoints,
     });
   }
-  
+
   async update(entity: Customer): Promise<void> {
     await CustomerModel.update(
       {
@@ -35,7 +35,7 @@ export default class CustomerRepository implements RepositoryInterface<Customer>
       }
     );
   }
-  
+
   async find(id: string): Promise<Customer> {
     let customerModel;
     try {
@@ -48,7 +48,7 @@ export default class CustomerRepository implements RepositoryInterface<Customer>
     } catch (error) {
       throw new Error("Customer not found");
     }
-    
+
     const customer = new Customer(id, customerModel.name);
     const address = new Address(
       customerModel.street,
@@ -59,26 +59,24 @@ export default class CustomerRepository implements RepositoryInterface<Customer>
     customer.changeAddress(address);
     return customer;
   }
-  
+
   async findAll(): Promise<Customer[]> {
     const customerModels = await CustomerModel.findAll();
-    
-    const customers = customerModels.map((customerModels) => {
-      let customer = new Customer(customerModels.id, customerModels.name);
-      customer.addRewardPoints(customerModels.rewardPoints);
+
+    return  customerModels.map((customerModel) => {
+      const customer = new Customer(customerModel.id, customerModel.name);
+      customer.addRewardPoints(customerModel.rewardPoints);
       const address = new Address(
-        customerModels.street,
-        customerModels.number,
-        customerModels.zipCode,
-        customerModels.city
+        customerModel.street,
+        customerModel.number,
+        customerModel.zipCode,
+        customerModel.city
       );
       customer.changeAddress(address);
-      if (customerModels.active) {
+      if (customerModel.active) {
         customer.activate();
       }
       return customer;
     });
-    
-    return customers;
   }
 }
