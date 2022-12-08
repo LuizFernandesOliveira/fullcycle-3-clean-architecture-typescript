@@ -1,16 +1,16 @@
-import RepositoryInterface from "../../../../domain/@shared/repository/repository-interface";
 import Customer from "../../../../domain/customer/entity/customer";
+import Address from "../../../../domain/customer/value-object/address";
+import CustomerRepositoryInterface from "../../../../domain/customer/repository/customer-repository.interface";
 import CustomerModel from "./customer.model";
-import Address from "../../../../domain/customer/valueobject/address";
 
-export default class CustomerRepository implements RepositoryInterface<Customer> {
+export default class CustomerRepository implements CustomerRepositoryInterface {
   async create(entity: Customer): Promise<void> {
     await CustomerModel.create({
       id: entity.id,
       name: entity.name,
       street: entity.Address.street,
       number: entity.Address.number,
-      zipCode: entity.Address.zipCode,
+      zipcode: entity.Address.zip,
       city: entity.Address.city,
       active: entity.isActive(),
       rewardPoints: entity.rewardPoints,
@@ -23,7 +23,7 @@ export default class CustomerRepository implements RepositoryInterface<Customer>
         name: entity.name,
         street: entity.Address.street,
         number: entity.Address.number,
-        zipCode: entity.Address.zipCode,
+        zipcode: entity.Address.zip,
         city: entity.Address.city,
         active: entity.isActive(),
         rewardPoints: entity.rewardPoints,
@@ -53,7 +53,7 @@ export default class CustomerRepository implements RepositoryInterface<Customer>
     const address = new Address(
       customerModel.street,
       customerModel.number,
-      customerModel.zipCode,
+      customerModel.zipcode,
       customerModel.city
     );
     customer.changeAddress(address);
@@ -63,20 +63,22 @@ export default class CustomerRepository implements RepositoryInterface<Customer>
   async findAll(): Promise<Customer[]> {
     const customerModels = await CustomerModel.findAll();
 
-    return  customerModels.map((customerModel) => {
-      const customer = new Customer(customerModel.id, customerModel.name);
-      customer.addRewardPoints(customerModel.rewardPoints);
+    const customers = customerModels.map((customerModels) => {
+      let customer = new Customer(customerModels.id, customerModels.name);
+      customer.addRewardPoints(customerModels.rewardPoints);
       const address = new Address(
-        customerModel.street,
-        customerModel.number,
-        customerModel.zipCode,
-        customerModel.city
+        customerModels.street,
+        customerModels.number,
+        customerModels.zipcode,
+        customerModels.city
       );
       customer.changeAddress(address);
-      if (customerModel.active) {
+      if (customerModels.active) {
         customer.activate();
       }
       return customer;
     });
+
+    return customers;
   }
 }

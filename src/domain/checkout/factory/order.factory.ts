@@ -26,5 +26,6 @@ export default class OrderFactory {
     });
     
     return new Order(props.id, props.customerId, items);
+
   }
 }

@@ -1,5 +1,5 @@
-import ProductRepositoryInterface from "../../../../domain/product/repository/product-repository.interface";
 import Product from "../../../../domain/product/entity/product";
+import ProductRepositoryInterface from "../../../../domain/product/repository/product-repository.interface";
 import ProductModel from "./product.model";
 
 export default class ProductRepository implements ProductRepositoryInterface {
@@ -7,36 +7,33 @@ export default class ProductRepository implements ProductRepositoryInterface {
     await ProductModel.create({
       id: entity.id,
       name: entity.name,
-      price: entity.price
+      price: entity.price,
     });
   }
 
   async update(entity: Product): Promise<void> {
-    await ProductModel.update({
-      name: entity.name,
-      price: entity.price
-    }, {
-      where: {id: entity.id}
-    });
+    await ProductModel.update(
+      {
+        name: entity.name,
+        price: entity.price,
+      },
+      {
+        where: {
+          id: entity.id,
+        },
+      }
+    );
   }
 
   async find(id: string): Promise<Product> {
-    let productModel;
-    try {
-      productModel = await ProductModel.findOne({
-        where: {
-          id,
-        },
-        rejectOnEmpty: true,
-      });
-    } catch (error) {
-      throw new Error("Product not found");
-    }
+    const productModel = await ProductModel.findOne({ where: { id } });
     return new Product(productModel.id, productModel.name, productModel.price);
   }
 
   async findAll(): Promise<Product[]> {
     const productModels = await ProductModel.findAll();
-    return productModels.map(productModel => new Product(productModel.id, productModel.name, productModel.price));
+    return productModels.map((productModel) =>
+      new Product(productModel.id, productModel.name, productModel.price)
+    );
   }
 }

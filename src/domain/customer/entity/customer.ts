@@ -1,10 +1,10 @@
-import Address from "../valueobject/address";
 import Entity from "../../@shared/entity/entity.abstract";
+import Address from "../value-object/address";
 import NotificationError from "../../@shared/notification/notification.error";
 import CustomerValidatorFactory from "../factory/customer.validator.factory";
 
 export default class Customer extends Entity {
-  private _name: string;
+  private _name: string = "";
   private _address!: Address;
   private _active: boolean = false;
   private _rewardPoints: number = 0;
@@ -14,30 +14,9 @@ export default class Customer extends Entity {
     this._id = id;
     this._name = name;
     this.validate();
-  }
-
-  validate() {
-    CustomerValidatorFactory.create().validate(this);
     if (this.notification.hasErrors()) {
       throw new NotificationError(this.notification.getErrors());
     }
-  }
-
-  changeName(name: string) {
-    this._name = name;
-    this.validate();
-  }
-
-  changeAddress(address: Address) {
-    this._address = address;
-  }
-
-  get Address(): Address {
-    return this._address;
-  }
-
-  get id(): string {
-    return this._id;
   }
 
   get name(): string {
@@ -48,8 +27,21 @@ export default class Customer extends Entity {
     return this._rewardPoints;
   }
 
-  addRewardPoints(points: number) {
-    this._rewardPoints += points;
+  validate() {
+    CustomerValidatorFactory.create().validate(this);
+  }
+
+  changeName(name: string) {
+    this._name = name;
+    this.validate();
+  }
+
+  get Address(): Address {
+    return this._address;
+  }
+
+  changeAddress(address: Address) {
+    this._address = address;
   }
 
   isActive(): boolean {
@@ -65,5 +57,13 @@ export default class Customer extends Entity {
 
   deactivate() {
     this._active = false;
+  }
+
+  addRewardPoints(points: number) {
+    this._rewardPoints += points;
+  }
+
+  set Address(address: Address) {
+    this._address = address;
   }
 }

@@ -1,4 +1,4 @@
-import ProductInterface from "./produc.interface";
+import ProductInterface from "./product.interface";
 
 export default class ProductB implements ProductInterface {
   private _id: string;

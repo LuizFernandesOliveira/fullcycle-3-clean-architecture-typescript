@@ -1,10 +1,14 @@
 import Product from "../entity/product";
+import ProductInterface from "../entity/product.interface";
 import { v4 as uuid } from "uuid";
-import ProductInterface from "../entity/produc.interface";
 import ProductB from "../entity/product-b";
 
 export default class ProductFactory {
-  public static createByType(type: string, name: string, price: number): ProductInterface {
+  public static create(
+    type: string,
+    name: string,
+    price: number
+  ): ProductInterface {
     switch (type) {
       case "a":
         return new Product(uuid(), name, price);
@@ -15,7 +19,7 @@ export default class ProductFactory {
     }
   }
 
-  public static create(name: string, price: number): Product {
+  public static createBy(name: string, price: number): Product {
     return new Product(uuid(), name, price);
   }
 }

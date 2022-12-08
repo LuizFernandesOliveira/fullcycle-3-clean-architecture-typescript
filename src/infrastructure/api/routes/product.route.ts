@@ -1,14 +1,13 @@
-import express from "express";
+import express, {Request, Response} from "express";
 import ProductRepository from "../../product/repository/sequelize/product.repository";
-import ListProductUseCase from "../../../usercase/product/list/list.product.usecase";
-import CreateProductUseCase from "../../../usercase/product/create/create.product.usecase";
+import ListProductUseCase from "../../../usecase/product/list/list.product.usecase";
+import CreateProductUseCase from "../../../usecase/product/create/create.product.usecase";
 
 export const productRoute = express.Router();
 
-productRoute.post("/", async (req, res) => {
+productRoute.post("/", async (req: Request, res: Response) => {
   const input = req.body;
-  const repository = new ProductRepository();
-  const useCase = new CreateProductUseCase(repository);
+  const useCase = new CreateProductUseCase(new ProductRepository());
   try {
     const output = await useCase.execute(input);
     res.status(200).send(output);
@@ -17,9 +16,8 @@ productRoute.post("/", async (req, res) => {
   }
 });
 
-productRoute.get("/", async (req, res) => {
-  const repository = new ProductRepository();
-  const useCase = new ListProductUseCase(repository);
+productRoute.get("/", async (req: Request, res: Response) => {
+  const useCase = new ListProductUseCase(new ProductRepository());
   try {
     const output = await useCase.execute();
     res.status(200).send(output);

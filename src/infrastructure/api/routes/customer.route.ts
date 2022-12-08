@@ -1,34 +1,36 @@
-import express from "express";
+import express, { Request, Response } from "express";
+import CreateCustomerUseCase from "../../../usecase/customer/create/create.customer.usecase";
+import ListCustomerUseCase from "../../../usecase/customer/list/list.customer.usecase";
 import CustomerRepository from "../../customer/repository/sequelize/customer.repository";
-import CreateCustomerUseCase from "../../../usercase/customer/create/create.customer.usecase";
-import ListCustomerUseCase from "../../../usercase/customer/list/list.customer.usecase";
 import CustomerPresenter from "../presenters/customer.presenter";
 
 export const customerRoute = express.Router();
 
-customerRoute.post("/", async (req, res) => {
-  const input = req.body;
-  const repository = new CustomerRepository();
-  const useCase = new CreateCustomerUseCase(repository);
+customerRoute.post("/", async (req: Request, res: Response) => {
+  const usecase = new CreateCustomerUseCase(new CustomerRepository());
   try {
-    const output = await useCase.execute(input);
-    res.status(200).send(output);
-  } catch (e) {
-    res.status(500).send(e)
+    const customerDto = {
+      name: req.body.name,
+      address: {
+        street: req.body.address.street,
+        city: req.body.address.city,
+        number: req.body.address.number,
+        zip: req.body.address.zip,
+      },
+    };
+    const output = await usecase.execute(customerDto);
+    res.send(output);
+  } catch (err) {
+    res.status(500).send(err);
   }
 });
 
-customerRoute.get("/", async (req, res) => {
-  const repository = new CustomerRepository();
-  const useCase = new ListCustomerUseCase(repository);
+customerRoute.get("/", async (req: Request, res: Response) => {
+  const usecase = new ListCustomerUseCase(new CustomerRepository());
+  const output = await usecase.execute({});
 
-  try {
-    const output = await useCase.execute();
-    res.format({
-      json: async () => res.status(200).send(output),
-      xml: async () => res.status(200).send(CustomerPresenter.toXML(output)),
-    });
-  } catch (e) {
-    res.status(500).send(e);
-  }
+  res.format({
+    json: async () => res.send(output),
+    xml: async () => res.send(CustomerPresenter.listXML(output)),
+  });
 });
