@@ -31,7 +31,7 @@ describe("Unit test create product use case", () => {
     const customerRepository = MockRepository();
     const customerCreateUseCase = new CreateProductUseCase(customerRepository);
     input.name = "";
-    await expect(() => customerCreateUseCase.execute(input)).rejects.toThrow("Name is required");
+    await expect(() => customerCreateUseCase.execute(input)).rejects.toThrow("product: Name is required");
   });
 
   it("should throw an error when price is less than zero", async () => {
@@ -39,6 +39,6 @@ describe("Unit test create product use case", () => {
     const customerCreateUseCase = new CreateProductUseCase(customerRepository);
     input.name = "test";
     input.price = 0;
-    await expect(() => customerCreateUseCase.execute(input)).rejects.toThrow("Price is not less than zero");
+    await expect(() => customerCreateUseCase.execute(input)).rejects.toThrow("product: Price is not less than zero");
   });
 })
